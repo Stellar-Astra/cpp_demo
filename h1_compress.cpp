@@ -1,10 +1,11 @@
 #include "splashkit.h"
 #include <unordered_map>
 #include <zlib.h>
+#include <iomanip>
+#include <sstream>
 
-using std::string;
-using std::to_string;
-using std::unordered_map;
+using namespace std;
+
 
 // Constant for number of entries
 const int MAX_ENTRIES = 1000;
@@ -91,11 +92,15 @@ void show_stats(const Entry entries[], const unordered_map<string, string> &comp
     double ratio = (double)original_size / compressed_size;
     double saving = 100.0 * (1.0 - ((double)compressed_size / original_size));
 
+    ostringstream ratio_stream, saving_stream;
+    ratio_stream << fixed << setprecision(2) << ratio;
+    saving_stream << fixed << setprecision(2) << saving;
+
     /** Print the statistics */
     write_line("Original Size: " + to_string(original_size) + " bytes");
     write_line("Compressed Size: " + to_string(compressed_size) + " bytes");
-    write_line("Compression Ratio: " + to_string(ratio) + ":1");
-    write_line("Space Saved: " + to_string(saving) + "%\n");
+    write_line("Compression Ratio: " + ratio_stream.str() + ":1");
+    write_line("Space Saved: " + saving_stream.str() + "%\n");
 }
 
 
