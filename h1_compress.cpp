@@ -3,13 +3,26 @@
 using std::string;
 using std::to_string;
 
+
 // Constant for number of memories 
+const int MAX_MEMORIES = 1000;
 
 
-// Enum for memory genres 
+// Enum for memory genres
+enum Genre
+{
+    PERSONAL,
+    BUSINESS
+};
 
 
 // Memory struct
+struct Memory
+{
+    string title;
+    Genre genre;
+    string content;
+};
 
 
 // Function to compress memory content, passing by reference
