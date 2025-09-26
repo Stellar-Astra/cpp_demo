@@ -1,3 +1,31 @@
+// Copyright (c) 2025 Donna Bye. All rights reserved.
+
+/**
+ * h1_compress.cpp
+ * ----------------
+ * Purpose:
+ * This program demonstrates a simple memory storage system that applies
+ * data compression techniques to reduce storage size while preserving
+ * the ability to recover and search the stored data.
+ *
+ * Key Features:
+ *  - Defines entries using a struct and categorises them with an enum.
+ *  - Generates a fixed number of sample entries with repeated patterns.
+ *  - Uses the zlib library to compress and decompress entry content.
+ *  - Stores compressed entries in a container (unordered_map).
+ *  - Calculates and reports compression ratio and space saved.
+ *  - Demonstrates collapsing and previewing decompressed entries.
+ *  - Supports searching entries by genre.
+ *
+ * Educational Value:
+ * This project applies core programming concepts: structs, enums, arrays,
+ * references, functions and external libraries. It also extends beyond
+ * the unit’s basics by integrating compression algorithms to illustrate
+ * efficiency in memory management.
+ */
+
+
+
 #include "splashkit.h"
 #include <unordered_map>
 #include <zlib.h>
@@ -83,6 +111,8 @@ void generate_entries(Entry entries[])
 // Function to show compression statistics, passing by reference
 void show_stats(const Entry entries[], const unordered_map<string, string> &compressed_entries)
 {
+    write_line("Calculating compression statistics...\n");
+
     /** Calculate original and compressed sizes */
     size_t original_size = 0, compressed_size = 0;
 
@@ -129,14 +159,19 @@ void collapse_entries(const Entry entries[], const unordered_map<string, string>
 
 
 // Function to find memories by genre, passing by reference
-void find_by_genre(const Entry entries[], Genre genre)
+void find_by_genre(const Entry entries[], Genre search_genre)
 {
+    /** Count the number of entries in the specified genre */
     int count = 0;
     for (int i = 0; i < MAX_ENTRIES; i++)
     {
+        /** Check if the entry matches the search genre */
+        if (entries[i].genre == search_genre)
+            count++;
     }
 
-    write_line(" ");
+    /** Print the count of entries found */
+    write_line("Found " + to_string(count) + " entries in the " + (search_genre == PERSONAL ? "Personal" : "Business") + " genre.");
 }
 
 
