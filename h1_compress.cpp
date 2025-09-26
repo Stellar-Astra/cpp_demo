@@ -31,8 +31,16 @@ struct Entry
 // Function to compress entry content, passing by reference
 string compress_content(const string &content)
 {
-    
-    return content;
+    /** Compress the content using zlib */
+    uLong src_len = content.size();
+    uLong dest_len = compressBound(src_len);
+    vector<Bytef> buffer(dest_len);
+
+    /** Perform the compression */
+    compress(buffer.data(), &dest_len, reinterpret_cast<const Bytef*>(content.data()), src_len);
+
+    /** Return the compressed content as a string */
+    return string(reinterpret_cast<const char*>(buffer.data()), dest_len);
 }
 
 
