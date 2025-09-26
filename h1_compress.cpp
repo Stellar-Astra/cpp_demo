@@ -45,3 +45,20 @@ struct Memory
 
 // Main function 
 int main()
+{
+    write_line("==============================");
+    write_line(" MEMORY SYSTEM DEMONSTRATION"  );
+    write_line("==============================");
+
+
+
+
+
+
+
+
+
+
+    write_line("Demonstration Complete.");
+    return 0;
+}
