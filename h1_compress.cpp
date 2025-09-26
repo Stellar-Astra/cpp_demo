@@ -27,6 +27,12 @@ struct Entry
     string content;
 };
 
+/** Convert a buffer to a string, points to the original data */
+string buffer_to_string(const vector<Bytef> &buffer, uLong length)
+{
+    return string(reinterpret_cast<const char*>(buffer.data()), length);
+}
+
 
 // Function to compress entry content, passing by reference
 string compress_content(const string &content)
@@ -40,15 +46,22 @@ string compress_content(const string &content)
     compress(buffer.data(), &dest_len, reinterpret_cast<const Bytef*>(content.data()), src_len);
 
     /** Return the compressed content as a string */
-    return string(reinterpret_cast<const char*>(buffer.data()), dest_len);
+    return buffer_to_string(buffer, dest_len);
 }
 
 
 // Function to decompress memory content, passing by reference
-string decompress_content(const string &compressed_content)
+string decompress_content(const string &compressed, uLong original_size)
 {
-    
-    return compressed_content;
+    /** Decompress the content using zlib */
+    vector<Bytef> buffer(original_size);
+    uLong dest_len = original_size;
+
+    /** Perform the decompression */
+    uncompress(buffer.data(), &dest_len, reinterpret_cast<const Bytef*>(compressed.data()), compressed.size());
+
+    /** Return the decompressed content as a string */
+    return buffer_to_string(buffer, dest_len);
 }
 
 
@@ -99,10 +112,13 @@ void find_by_genre(const Entry entries[], Genre genre)
 // Main function 
 int main()
 {
+    /** Initialize the memory system */
     write_line("==============================");
     write_line(" MEMORY SYSTEM DEMONSTRATION"  );
     write_line("==============================");
 
+    
+    /** Generate demo entries */
     Entry entries[MAX_ENTRIES];
     generate_entries(entries);
     
@@ -112,11 +128,11 @@ int main()
         
     }
 
-
+    /** Show statistics, collapse some entries, and find by genre */
     show_stats(entries);
     collapse_entries(entries);
+    find_by_genre(entries, PERSONAL);
    
-
 
     write_line("Demonstration Complete.");
     return 0;
