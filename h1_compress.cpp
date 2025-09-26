@@ -1,10 +1,11 @@
 #include "splashkit.h"
 #include <unordered_map>
 #include <zlib.h>
+#include <iomanip>
+#include <sstream>
 
-using std::string;
-using std::to_string;
-using std::unordered_map;
+using namespace std;
+
 
 // Constant for number of entries
 const int MAX_ENTRIES = 1000;
@@ -73,13 +74,35 @@ void generate_entries(Entry entries[])
     }
 }
 
+
 // Function to show compression statistics, passing by reference
-void show_stats(const Entry entries[])
+void show_stats(const Entry entries[], const unordered_map<string, string> &compressed_entries)
 {
+    /** Calculate original and compressed sizes */
+    size_t original_size = 0, compressed_size = 0;
+
     for (int i = 0; i < MAX_ENTRIES; i++)
     {
+        /** Accumulate sizes */
+        original_size += entries[i].content.size();
+        compressed_size += compressed_entries.at(entries[i].id).size();
     }
+
+    /** Calculate compression ratio and space saved */
+    double ratio = (double)original_size / compressed_size;
+    double saving = 100.0 * (1.0 - ((double)compressed_size / original_size));
+
+    ostringstream ratio_stream, saving_stream;
+    ratio_stream << fixed << setprecision(2) << ratio;
+    saving_stream << fixed << setprecision(2) << saving;
+
+    /** Print the statistics */
+    write_line("Original Size: " + to_string(original_size) + " bytes");
+    write_line("Compressed Size: " + to_string(compressed_size) + " bytes");
+    write_line("Compression Ratio: " + ratio_stream.str() + ":1");
+    write_line("Space Saved: " + saving_stream.str() + "%\n");
 }
+
 
 // Function to collapse and preview a few memories, passing by reference
 void collapse_entries(const Entry entries[])
@@ -88,6 +111,7 @@ void collapse_entries(const Entry entries[])
     {
     }
 }
+
 
 // Function to find memories by genre, passing by reference
 void find_by_genre(const Entry entries[], Genre genre)
@@ -99,6 +123,7 @@ void find_by_genre(const Entry entries[], Genre genre)
 
     write_line(" ");
 }
+
 
 // Main function
 int main()
@@ -124,9 +149,10 @@ int main()
     write_line("Generated " + to_string(MAX_ENTRIES) + " entries\n");
 
     /** Show statistics, collapse some entries, and find by genre */
-    show_stats(entries);
+    show_stats(entries, compressed_entries);
     collapse_entries(entries);
     find_by_genre(entries, PERSONAL);
+    find_by_genre(entries, BUSINESS);
 
     write_line("\nDemonstration Complete.");
     return 0;
