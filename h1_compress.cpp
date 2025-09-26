@@ -10,12 +10,14 @@ using namespace std;
 // Constant for number of entries
 const int MAX_ENTRIES = 1000;
 
+
 // Enum for entry genres
 enum Genre
 {
     PERSONAL,
     BUSINESS
 };
+
 
 // Entry struct
 struct Entry
@@ -25,11 +27,13 @@ struct Entry
     string content;
 };
 
+
 /** Convert a buffer to a string, points to the original data */
 string buffer_to_string(const vector<Bytef> &buffer, uLong length)
 {
     return string(reinterpret_cast<const char *>(buffer.data()), length);
 }
+
 
 // Function to compress entry content, passing by reference
 string compress_content(const string &content)
@@ -45,6 +49,7 @@ string compress_content(const string &content)
     /** Return the compressed content as a string */
     return buffer_to_string(buffer, dest_len);
 }
+
 
 // Function to decompress memory content, passing by reference
 string decompress_content(const string &compressed, uLong original_size)
@@ -105,10 +110,20 @@ void show_stats(const Entry entries[], const unordered_map<string, string> &comp
 
 
 // Function to collapse and preview a few memories, passing by reference
-void collapse_entries(const Entry entries[])
+void collapse_entries(const Entry entries[], const unordered_map<string, string> &compressed_entries)
 {
+    write_line("\nCollapsing sample entries: ");
+
     for (int i = 0; i < 3; i++)
     {
+        /** Select a random entry */
+        int idx = rnd(MAX_ENTRIES);
+        Entry e = entries[idx];
+        /** Decompress the content */
+        string decompressed = decompress_content(compressed_entries.at(e.id), e.content.size());
+        /** Print entry details and a preview of the content */
+        write_line("ID: " + e.id + ", Genre: " + (e.genre == PERSONAL ? "Personal" : "Business"));
+        write_line("Content Preview: " + decompressed.substr(0, 40) + "...\n");
     }
 }
 
@@ -150,7 +165,7 @@ int main()
 
     /** Show statistics, collapse some entries, and find by genre */
     show_stats(entries, compressed_entries);
-    collapse_entries(entries);
+    collapse_entries(entries, compressed_entries);
     find_by_genre(entries, PERSONAL);
     find_by_genre(entries, BUSINESS);
 
