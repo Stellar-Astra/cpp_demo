@@ -27,6 +27,7 @@
 
 
 #include "splashkit.h"
+#include "utilities.h"
 #include <unordered_map>
 #include <zlib.h>
 #include <iomanip>
@@ -174,6 +175,13 @@ void find_by_genre(const Entry entries[], Genre search_genre)
     write_line("Found " + to_string(count) + " entries in the " + (search_genre == PERSONAL ? "Personal" : "Business") + " genre.");
 }
 
+//void save_to_file()
+
+
+//void load_from_file()
+
+
+
 
 // Main function
 int main()
@@ -189,21 +197,66 @@ int main()
 
     /** Compress the entries */
     unordered_map<string, string> compressed_entries;
-
     for (int i = 0; i < MAX_ENTRIES; i++)
     {
         compressed_entries[entries[i].id] = compress_content(entries[i].content);
     }
 
-    /** Print number of generated entries  */
-    write_line("Generated " + to_string(MAX_ENTRIES) + " entries\n");
+    int choice = 0;
+    while (choice != 7)
+    {
+        write_line("\nMenu:");
+        write_line("1. Show compression statistics");
+        write_line("2. Collapse and preview random entries");
+        write_line("3. Find entries by genre");
+        write_line("4. Save compressed entries to file");
+        write_line("5. Load compressed entries from file");
+        write_line("6. Regenerate entries");
+        write_line("7. Exit");
+        
+        choice = read_integer("Enter choice: ");
 
-    /** Show statistics, collapse some entries, and find by genre */
-    show_stats(entries, compressed_entries);
-    collapse_entries(entries, compressed_entries);
-    find_by_genre(entries, PERSONAL);
-    find_by_genre(entries, BUSINESS);
+        switch (choice)
+        {
+            case 1:
+                show_stats(entries, compressed_entries);
+                break;
+            case 2:
+                collapse_entries(entries, compressed_entries);
+                break;
+            case 3:
+                int genre_choice;
+                genre_choice = read_integer("Enter genre (0 = Personal, 1 = Business):");
+                if (genre_choice == 0 || genre_choice == 1)
+                    find_by_genre(entries, (genre_choice == 0 ? PERSONAL : BUSINESS));
+                else
+                {
+                    write_line("Invalid genre choice.");
+                }
+                break;
+            case 4:
+                //save_to_file();
+                break;
+            case 5:
+                //load_from_file();
+                break;
+            case 6:
+                generate_entries(entries);
+                compressed_entries.clear();
+                for (int i = 0; i < MAX_ENTRIES; i++)
+                {
+                    compressed_entries[entries[i].id] = compress_content(entries[i].content);
+                }
+                write_line("Entries regenerated and recompressed.");
+                break;
+            case 7:
+                write_line("Exiting program.");
+                break;
+            default:
+                write_line("Invalid choice, try again.");
+        }
+    }
 
-    write_line("\nDemonstration Complete.");
     return 0;
 }
+
