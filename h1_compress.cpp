@@ -16,14 +16,9 @@
  *  - Calculates and reports compression ratio and space saved.
  *  - Demonstrates collapsing and previewing decompressed entries.
  *  - Supports searching entries by genre.
- *
- * Educational Value:
- * This project applies core programming concepts: structs, enums, arrays,
- * references, functions and external libraries. It also extends beyond
- * the unit’s basics by integrating compression algorithms to illustrate
- * efficiency in memory management.
+ *  - Provides options to save and load compressed entries to/from a file.
+ *  - Includes a simple text-based menu for user interaction.
  */
-
 
 
 #include "splashkit.h"
@@ -199,9 +194,33 @@ void save_to_file(const Entry entries[], const unordered_map<string, string> &co
     write_line("Entries saved to " + filename);
 }
 
-//void load_from_file()
 
+//function to load compressed entries from a file, passing by reference
+void load_from_file(const string &filename)
+{
+    /** Open the file for reading */
+    ifstream file(filename, ios::binary);
+    if (!file)
+    {
+        write_line("Error opening file for reading.");
+        return;
+    }
 
+    /** Read and display a few entries from the file */
+    string line;
+    write_line("\nLoaded entries from file:");
+    int count = 0;
+
+    /** Read and display a few entries from the file */
+    while (getline(file, line) && count < 5) 
+    {
+        write_line(line.substr(0, 60) + "...");
+        count++;
+    }
+
+    /** Close the file */
+    file.close();
+}
 
 
 // Main function
@@ -259,7 +278,7 @@ int main()
                 save_to_file(entries, compressed_entries, "compressed_entries.txt");
                 break;
             case 5:
-                //load_from_file();
+                load_from_file("compressed_entries.txt");
                 break;
             case 6:
                 generate_entries(entries);
