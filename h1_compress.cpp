@@ -32,6 +32,7 @@
 #include <zlib.h>
 #include <iomanip>
 #include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -175,8 +176,28 @@ void find_by_genre(const Entry entries[], Genre search_genre)
     write_line("Found " + to_string(count) + " entries in the " + (search_genre == PERSONAL ? "Personal" : "Business") + " genre.");
 }
 
-//void save_to_file()
 
+//function to save compressed entries to a file, passing by reference
+void save_to_file(const Entry entries[], const unordered_map<string, string> &compressed_entries, const string &filename)
+{
+    /** Open the file for writing */
+    ofstream file(filename, ios::binary);
+    if (!file)
+    {
+        write_line("Error opening file for writing.");
+        return;
+    }
+
+    /** Write the compressed entries to the file */
+    for (int i = 0; i < MAX_ENTRIES; i++)
+    {
+        file << entries[i].id << "|" << entries[i].genre << "|" << compressed_entries.at(entries[i].id) << "\n";
+    }
+
+    /** Close the file */
+    file.close();
+    write_line("Entries saved to " + filename);
+}
 
 //void load_from_file()
 
@@ -235,7 +256,7 @@ int main()
                 }
                 break;
             case 4:
-                //save_to_file();
+                save_to_file(entries, compressed_entries, "compressed_entries.txt");
                 break;
             case 5:
                 //load_from_file();
